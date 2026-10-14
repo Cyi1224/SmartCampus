@@ -1,0 +1,119 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  application:
+    name: campus
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD}
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.simon.campus.model.entity
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    map-underscore-to-camel-case: true
+#    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 604800000  # 7 days
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+# Milvus（Phase 2+）
+milvus:
+  host: localhost
+  port: 19530
+  collection-name: campus_child_chunks
+
+# MinIO（Phase 2+）
+minio:
+  endpoint: http://localhost:9000
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket-name: campus-docs
+  local-data-dir: ${MINIO_LOCAL_DATA_DIR:}
+
+# LLM（DeepSeek）
+dashscope:
+  api-key: ${LLM_API_KEY}
+  base-url: ${LLM_BASE_URL:https://api.deepseek.com}
+
+# Embedding / Rerank 单独 key（DashScope text-embedding-v3 & gte-rerank）
+# 若无 DashScope key 留空即可，知识库功能暂不可用
+embed:
+  api-key: ${DASHSCOPE_EMBED_API_KEY:}
+
+models:
+  intent-router:
+    model: deepseek-v4-pro
+    temperature: 0.1
+    max-tokens: 256
+  query-rewriter:
+    model: deepseek-v4-pro
+    temperature: 0.3
+    max-tokens: 512
+  rag-generator:
+    model: deepseek-v4-pro
+    temperature: 0.2
+    max-tokens: 2048
+  tool-caller:
+    model: deepseek-v4-pro
+    temperature: 0.1
+    max-tokens: 1024
+  chitchat:
+    model: deepseek-v4-pro
+    temperature: 0.7
+    max-tokens: 1024
+  vision-parser:
+    model: deepseek-v4-pro
+    temperature: 0.1
+    max-tokens: 2048
+
+knowledge:
+  vision:
+    pdf-image-enabled: true
+    pdf-render-dpi: 144
+    pdf-max-pages: 30

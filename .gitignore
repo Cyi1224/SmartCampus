@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+target/
+campus-frontend/node_modules/
+campus-frontend/dist/
+uploads/
+.idea/
+.vscode/
+*.log
+*.iml
+docs/private/
